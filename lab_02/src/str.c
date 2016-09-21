@@ -1,4 +1,6 @@
-﻿char* my_strcpy(char* destination, const char* source)
+﻿#include "stddef.h"
+
+char* strcpy(char* destination, const char* source)
 {
 	while(*source)
 		*destination++ = *source++;
@@ -6,7 +8,7 @@
     return destination;
 }
 
-char* my_strcat(char* destination, const char* source)
+char* strcat(char* destination, const char* source)
 {
 
 	while(*++destination)
@@ -17,7 +19,7 @@ char* my_strcat(char* destination, const char* source)
 	return destination;
 }
 
-int my_strcmp(const char* str1, const char* str2)
+int strcmp(const char* str1, const char* str2)
 {
 	while (*str1||*str2)
 		if ((*str1++) != (*str2++))
@@ -25,10 +27,10 @@ int my_strcmp(const char* str1, const char* str2)
 	return 1;
 }
 
-int my_strlen(const char* str)
+size_t strlen(const char* str)
 {
-   int size = 0;
-   while (*str++)
+ 	 size_t size = 0;
+  	 while (*str++)
    		size++;
-   return size;
+     return size;
 }
