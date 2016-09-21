@@ -1,6 +1,0 @@
-﻿char* strcpy(char* destination, const char* source)
-{
-	while(*source)
-		*destination++ = *source++;
-	*destination = '\0';
-}
