@@ -6,7 +6,7 @@
 int main()
 {
 	char s1[] = "12345";
-	char s2[] = "12345";
+	char s2[] = "1234";
 	printf("strlen: %d\n", test_strlen(s1, 5));
 	printf("strcmp: %d\n", test_strcmp(s1, s2, 1));
 	char s3[] = "6789";

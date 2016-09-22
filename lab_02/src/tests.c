@@ -4,8 +4,7 @@
 
 int test_strcpy(char * destination, const char * source, char* answer)
 {
-	strcpy(destination, source);
-	if (strcmp(destination, answer))
+	if (strcmp(strcpy(destination, source), answer) == 0)
 		return 1;
 	else
 		return 0;		
@@ -13,8 +12,7 @@ int test_strcpy(char * destination, const char * source, char* answer)
 
 int test_strcat(char * destination, const char * source, char* answer)
 {
-	strcat(destination, source);         
-	if (strcmp(destination, answer))
+	if (strcmp(strcat(destination, source), answer) == 0)
 		return 1;
 	else
 		return 0;		
