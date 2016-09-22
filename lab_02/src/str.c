@@ -22,8 +22,6 @@ char* strcat(char* destination, const char* source)
 
 int strcmp(const char* str1, const char* str2)
 {
-	const char* temp_str1 = str1;
-	const char* temp_str2 = str2;
 	while (*str1||*str2)
 	{
 		if (*str1 > *str2)
@@ -38,7 +36,6 @@ int strcmp(const char* str1, const char* str2)
 
 size_t strlen(const char* str)
 {
- 	 const char* temp_str = str;
  	 size_t size = 0;
   	 while (*str++)
    		size++;
