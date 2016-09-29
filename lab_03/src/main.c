@@ -21,12 +21,12 @@ void remove_position(struct intrusive_list* l, int x, int y){
 	struct intrusive_node* node = l->head.next;
 	while (node != &l->head){
 		struct position_node* ptr = container_of(node, struct position_node, node);
+		node = node->next;	
 		if ((ptr->x == x) && (ptr->y == y))
 		{
-			remove_node(l, node);	
+			remove_node(l, node->prev);	
 			free(ptr);
 		}
-		node = node->next;
 	}
 }
 void show_all_positions(struct intrusive_list* l){
