@@ -22,7 +22,7 @@ void MyVector :: resize(std::size_t new_size){
         for (int i = size_v; i < new_size; i++)
             array[i] = 0;
     else{
-        capacity_v = new_size*2;
+        capacity_v = new_size;
         int* new_array = new int[capacity_v];
         for (int i = 0; i <= new_size; i++){
             if (size_v > i)
@@ -63,13 +63,15 @@ std::size_t MyVector :: capacity(){
 
 
 void MyVector :: reserve(std::size_t new_capacity){
-    capacity_v = new_capacity;
-    int* new_array = new int[capacity_v];
-    for (int i = 0; i < size_v; i++)
-        if (size_v > i)
-            new_array[i] = array[i];
-    delete []array;
-    array = new_array;
+    if (new_capacity > capacity_v){
+        capacity_v = new_capacity;
+        int* new_array = new int[capacity_v];
+        for (int i = 0; i < size_v; i++)
+            if (size_v > i)
+                new_array[i] = array[i];
+        delete []array;
+        array = new_array;
+    }
 }
 
 int MyVector :: get(std::size_t i){
