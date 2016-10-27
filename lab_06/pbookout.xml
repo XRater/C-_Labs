@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phonebook>
+    <human name="Raisa Yakovlevna Lobanova">
+        <phone>01</phone>
+        <phone>1149302308</phone>
+        <phone>038</phone>
+        <phone>7557202056</phone>
+        <phone>29339473405855</phone>
+    </human>
+    <human name="Fillida Aleksandrovna Lazareva">
+        <phone>9944666</phone>
+        <phone>63795830799</phone>
+        <phone>509</phone>
+        <phone>77354</phone>
+        <phone>256813475204273782</phone>
+        <phone>7749687</phone>
+        <phone>3400</phone>
+    </human>
+    <human name="Alla Romanovna Fedina">
+        <phone>12675917</phone>
+        <phone>6689486874668130115</phone>
+        <phone>04123074462</phone>
+        <phone>2</phone>
+        <phone>179958447250</phone>
+        <phone>7397360813559</phone>
+        <phone>916</phone>
+        <phone>33149083928</phone>
+        <phone>674660498525</phone>
+        <phone>391</phone>
+    </human>
+    <human name="Anisyya Feliksovna Chupova">
+        <phone>5407256767</phone>
+        <phone>34924514251481</phone>
+        <phone>47268709544310356</phone>
+        <phone>68349966</phone>
+    </human>
+    <human name="Karlygash Nikolaevna Larina">
+        <phone>0018908055</phone>
+        <phone>187453121482340</phone>
+        <phone>7696899700707458</phone>
+        <phone>22875289024742</phone>
+        <phone>01300</phone>
+    </human>
+</phonebook>

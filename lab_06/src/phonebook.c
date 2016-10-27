@@ -56,8 +56,8 @@ void push_back_human(phonebook_t *book, human_t *human){
 
 void push_random_human(phonebook_t *book){
     human_t human;
-    strcpy(human.name, kFamilyNames[rand()%FAMILY_NAMES_CNT]);       
-    strcpy(human.middle_name, kFamilyNames[rand()%FAMILY_NAMES_CNT]);       
+    strcpy(human.name, kNames[rand()%NAMES_CNT]);       
+    strcpy(human.middle_name, kMiddleNames[rand()%MIDDLE_NAMES_CNT]);       
     strcpy(human.family_name, kFamilyNames[rand()%FAMILY_NAMES_CNT]);       
     human.phone_number = rand()%11;
     int i;

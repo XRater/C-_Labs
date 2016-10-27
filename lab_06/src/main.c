@@ -18,6 +18,7 @@ void str_parse(char* dest, const char* source, size_t length){
 typedef struct data {
     size_t human_number;
     size_t phone_number;
+    size_t phone;
     phonebook_t* book;
 } data_t;
 
@@ -36,22 +37,29 @@ void start_element(void* data_void, const char *element, const char **attribute)
         push_back_human(data->book, &human);
         free(tmp);
     }
+    if (strcmp(element, "phone") == 0){
+        strcpy(data->book->humans[data->human_number].phones[data->phone_number], "");     
+        data->phone = 1;
+    }
 }
 
 void end_element(void *data_void, const char *element) {
     data_t* data = (data_t*) data_void;    
     if (strcmp(element, "human") == 0)    
         data->phone_number = 0;
+    if (strcmp(element, "phone") == 0){    
+        data->phone = 0;
+        data->book->humans[data->human_number].phone_number++;
+        data->phone_number++;
+    }
 }
 
 void handle_data(void *data_void, const char *content, int length) {
     char* phone = malloc(length + 1);
     str_parse(phone, content, length);
     data_t* data = (data_t*) data_void;        
-    if (strlen(phone)){
-        strcpy(data->book->humans[data->human_number].phones[data->phone_number++], phone); 
-        data->book->humans[data->human_number].phone_number++;
-    }   
+    if (strlen(phone)&&data->phone)
+        strcat(data->book->humans[data->human_number].phones[data->phone_number], phone); 
     free(phone);     
 }
 
@@ -67,6 +75,7 @@ int parse_xml(const char* filename, phonebook_t* book, char *buff, size_t buff_s
     data.book = book;
     data.human_number = -1;
     data.phone_number = 0;
+    data.phone = 0;
     XML_Parser  parser = XML_ParserCreate(NULL);
     XML_SetElementHandler(parser, start_element, end_element);
     XML_SetCharacterDataHandler(parser, handle_data);
@@ -91,9 +100,14 @@ int parse_xml(const char* filename, phonebook_t* book, char *buff, size_t buff_s
     return 0;
 }
 
+int comp(const void* a, const void* b){
+    return(strcmp(((human_t*) a)->family_name, ((human_t*) b)->family_name));
+}
+
 int load_phonebook_xml(const char* filename, phonebook_t* book){
     char buffer[BUFFER_SIZE];
     parse_xml(filename, book, buffer, BUFFER_SIZE);    
+    qsort(book->humans, book->size, sizeof(human_t), comp);
 }
 
 int main(int argc, char **argv) {
