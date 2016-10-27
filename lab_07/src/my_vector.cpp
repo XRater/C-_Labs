@@ -22,7 +22,8 @@ void MyVector :: resize(std::size_t new_size){
         for (int i = size_v; i < new_size; i++)
             array[i] = 0;
     else{
-        capacity_v = new_size;
+        while (capacity_v <= new_size)
+            capacity_v *= 2;
         int* new_array = new int[capacity_v];
         for (int i = 0; i <= new_size; i++){
             if (size_v > i)
@@ -85,8 +86,10 @@ void MyVector :: erase(std::size_t ind){
 }
 
 void MyVector :: insert(std::size_t ind, int value){
-    resize(size_v + 1);
-    for (int i = size_v - 1; i > ind; i--)
-        array[i] = array[i - 1];
-    array[ind] = value;
+    if (ind <= size_v){
+        resize(size_v + 1);
+        for (int i = size_v - 1; i > ind; i--)
+            array[i] = array[i - 1];
+        array[ind] = value;
+   }
 }
