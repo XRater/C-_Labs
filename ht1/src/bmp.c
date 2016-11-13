@@ -7,12 +7,16 @@ void init_bmp(bmp_t* bmp){
     int i;
     for (i = 0; i < bmp->height; i++)
         bmp->pixels[i] = malloc(bmp->width*sizeof(pixel_t));
+	bmp->alignment_size = bmp->width%4;
+	bmp->alignment = malloc(bmp->alignment_size);
+	for (i = 0; i < bmp->alignment_size; i++)
+		bmp->alignment[i] = 255;
 }
 
 int load_bmp(char* filename, bmpheader_t* header, bmp_t* bmp){
     FILE* input;
     input = fopen(filename, "rb");
-    if (input == NULL) {
+    if (!input) {
         printf("Failed to open input file\n");
         return 1;
     }
@@ -22,8 +26,10 @@ int load_bmp(char* filename, bmpheader_t* header, bmp_t* bmp){
     bmp->pixel_number = header->biWidth*header->biHeight;
     init_bmp(bmp);
     int i;
-    for (i = 1; i <= bmp->height; i++)
-        fread(bmp->pixels[bmp->height - i], sizeof(pixel_t), bmp->width, input);  
+    for (i = 1; i <= bmp->height; i++){
+        fread(bmp->pixels[bmp->height - i], sizeof(pixel_t), bmp->width, input);
+    	fread(bmp->alignment, 1, bmp->alignment_size, input);
+    }  
     fclose(input);  
     return 0;  
 }
@@ -31,14 +37,16 @@ int load_bmp(char* filename, bmpheader_t* header, bmp_t* bmp){
 int save_bmp(char* filename, bmpheader_t* header, bmp_t* bmp){
     FILE* output;
     output = fopen(filename, "wb");
-    if (output == NULL) {
+    if (!output) {
         printf("Failed to open output file\n");
         return 1;
     }
     fwrite(header, sizeof(char), 54, output);
     int i;
-    for (i = 1; i <= bmp->height; i++)
+    for (i = 1; i <= bmp->height; i++){
         fwrite(bmp->pixels[bmp->height - i], sizeof(pixel_t), bmp->width, output);
+    	fwrite(bmp->alignment, 1, bmp->alignment_size, output);
+    }
     fclose(output);  
     return 0;  
 }
@@ -48,6 +56,7 @@ void free_bmp(bmp_t* bmp){
     for (i = 0; i < bmp->height; i++)
         free(bmp->pixels[i]);
     free(bmp->pixels);
+ 	free(bmp->alignment);
     free(bmp);
 }
 
@@ -75,15 +84,17 @@ int crop_rotate_bmp(bmpheader_t* header, bmp_t* bmp, bmp_t* resbmp, size_t x, si
         printf("Second point is out of image\n");
         return 1;
     }
+    int i, j;
+    resbmp->width = h;
+    resbmp->height = w;
+    init_bmp(resbmp);
     header->biWidth = h;
     header->biHeight = w;
-    int i, j;
-    resbmp->height = w;
-    resbmp->width = h;
-    init_bmp(resbmp);
-    for (i = x; i < x + h; i++)
-        for (j = y; j < y + w; j++)
-            resbmp->pixels[j - y][i - x] = bmp->pixels[i][j];
+    header->bfSize = sizeof(bmpheader_t) + w*(sizeof(pixel_t)*h + resbmp->alignment_size);
+    header->biSizeImage = w*h*sizeof(pixel_t);
+  	for (i = 0; i < w; i++)
+  		for (j = 0; j < h; j++)
+  			resbmp->pixels[i][j] = bmp->pixels[y + j][x + w - i - 1];
     return 0;
 }
 
