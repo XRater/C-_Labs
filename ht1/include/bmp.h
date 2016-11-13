@@ -39,8 +39,8 @@ typedef struct BMPHeader{
 #pragma pack(pop)
 
 void init_bmp(bmp_t* bmp);
-int load_bmp(char* filename, bmpheader_t* header, bmp_t* bmp);
-int save_bmp(char* filename, bmpheader_t* header, bmp_t* bmp);
+int load_bmp(const char* filename, bmpheader_t* header, bmp_t* bmp);
+int save_bmp(const char* filename, const bmpheader_t* header, const bmp_t* bmp);
 void free_bmp(bmp_t* bmp);
 void mask_bmp(bmp_t* bmp);
-int crop_rotate_bmp(bmpheader_t* header, bmp_t* bmp, bmp_t* resbmp, size_t x, size_t y, size_t w, size_t h);
+int crop_rotate_bmp(bmpheader_t* header, const bmp_t* bmp, bmp_t* resbmp, size_t x, size_t y, size_t w, size_t h);
