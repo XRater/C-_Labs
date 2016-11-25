@@ -25,8 +25,8 @@ Matrix::Matrix(const Matrix& m) {
 
 Matrix::~Matrix() {
     for (int i = 0; i < (int) _rows; i++)
-        delete _data[i];
-    delete _data;
+        delete [] _data[i];
+    delete [] _data;
 }
 
 std::size_t Matrix::get_rows() const { return _rows; }
@@ -84,9 +84,9 @@ Matrix& Matrix::operator-=(const Matrix& m) {
 
 Matrix& Matrix::operator=(const Matrix& m) { 
   for (int i = 0; i < (int) _rows; i++)
-      delete _data[i];
+      delete [] _data[i];
+   delete []_data;
   
-  delete _data;
   _rows = m._cols;
   _cols = m._rows;
   _data = new int*[_rows];
