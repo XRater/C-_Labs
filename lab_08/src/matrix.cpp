@@ -13,8 +13,8 @@ Matrix::Matrix(std::size_t r, std::size_t c) {
 }
 
 Matrix::Matrix(const Matrix& m) {
-    _rows = m._cols;
-    _cols = m._rows;
+    _rows = m._rows;
+    _cols = m._cols;
     _data = new int*[_rows];
     for (int i = 0; i < (int) _rows; i++){
         _data[i] = new int[_cols];
@@ -87,8 +87,8 @@ Matrix& Matrix::operator=(const Matrix& m) {
       delete [] _data[i];
    delete []_data;
   
-  _rows = m._cols;
-  _cols = m._rows;
+  _rows = m._rows;
+  _cols = m._cols;
   _data = new int*[_rows];
   for (int i = 0; i < (int) _rows; i++){
       _data[i] = new int[_cols];
@@ -104,7 +104,7 @@ Matrix& Matrix::operator*=(const Matrix& m) {
 }
 
 Matrix Matrix::operator+(const Matrix& m) const {
-  Matrix tmp(m);
+  Matrix tmp(_rows, _cols);
   tmp += m;
   tmp += *this;
   return tmp;
@@ -133,5 +133,3 @@ Matrix Matrix::operator*(const Matrix& m) const{
     }
   return tmp;
 }
-
-
