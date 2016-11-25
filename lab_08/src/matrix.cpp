@@ -118,7 +118,7 @@ Matrix Matrix::operator*(int c) const{
 }
 
 Matrix Matrix::operator-(const Matrix& m) const{
-  Matrix tmp(m);
+  Matrix tmp(*this);
   tmp -= m;
   return tmp;
  }
