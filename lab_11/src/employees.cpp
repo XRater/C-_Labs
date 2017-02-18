@@ -3,7 +3,7 @@
 #include <fstream>
 #include <cstdio>
 
-char* read_string(char*& dest) {
+int read_string(char*& dest) {
     int length = 2;
     dest = new char[length];
     int ptr = 0;
@@ -24,25 +24,15 @@ char* read_string(char*& dest) {
         symbol = getchar();
     }
     dest[ptr++] = '\0';
-    return dest;
+    return ptr;
 }
 
-void print_string(const char* source, std::ofstream& os){    
-    char symbol = *source;
-    while (symbol != '\0') {
-        os.write(&symbol, sizeof(char));
-        symbol = *(++source);    
-    }        
-    os.write(&symbol, sizeof(char));
-}
-
-char* get_string(char*& dest, std::ifstream& is){    
+int get_string(char*& dest, std::ifstream& is){    
     int length = 2;
     int ptr = 0;
     dest = new char[length];
     char symbol;
     is.read(&symbol, sizeof(char));
-    //std::cout << symbol;
     while (symbol != '\0') {
         dest[ptr++] = symbol;
         
@@ -55,11 +45,9 @@ char* get_string(char*& dest, std::ifstream& is){
             length *= 2; 
         }
         is.read(&symbol, sizeof(char));
-      //  std::cout << symbol;
     }        
     dest[ptr++] = symbol;
-    //std::cout << dest;
-    return dest;
+    return ptr;
 }
 
 std::ostream& operator<<(std::ostream& os, const Employee& emp) {
@@ -73,7 +61,6 @@ std::istream& operator>>(std::istream& is, Employee& emp) {
 }
 
 std::ofstream& operator<<(std::ofstream& os, const Employee& emp) {
-    //std::cout << "Hello";
     emp.save(os);   
     return os;
 }
@@ -124,45 +111,45 @@ void Developer::print(std::ostream& os) const {
 }
 
 void Developer::read(std::istream& is) {
-    read_string(_name);
+    _name_length = read_string(_name);
     is >> _base_salary >> _has_bonus;     
 }
 
 void Developer::save(std::ofstream& os) const{
     int type = 1;
     os.write((char*)&type, sizeof(int));
-    print_string(_name, os);
+    os.write(_name, _name_length * sizeof(char));
     os.write((char*)&_base_salary, sizeof(int));
     os.write((char*)&_has_bonus, sizeof(bool));
 }
 
 void Developer::load(std::ifstream& is) {
-    get_string(_name, is);
+    _name_length = get_string(_name, is);
     is.read((char*) &_base_salary, sizeof(int));
     is.read((char*) &_has_bonus, sizeof(bool));
 }
 
 void SalesManager::print(std::ostream& os) const {
     os << "Sales Manager\nName: " << _name << "\nBase Salary: " << _base_salary;
-    os << "\nSold items: " << _sold_nm << "\nItem price:" << _price << '\n'; 
+    os << "\nSold items: " << _sold_nm << "\nItem price: " << _price << '\n'; 
 }
 
 void SalesManager::read(std::istream& is) {
-    read_string(_name);
+    _name_length = read_string(_name);
     is >> _base_salary >> _sold_nm >> _price;
 }
 
 void SalesManager::save(std::ofstream& os) const{
     int type = 2;
     os.write((char*)&type, sizeof(int));
-    print_string(_name, os);
+    os.write(_name, _name_length * sizeof(char));
     os.write((char*)&_base_salary, sizeof(int));
     os.write((char*)&_sold_nm, sizeof(int));
     os.write((char*)&_price, sizeof(int));
 }
 
 void SalesManager::load(std::ifstream& is) {
-    get_string(_name, is);
+    _name_length = get_string(_name, is);
     is.read((char*) &_base_salary, sizeof(int));
     is.read((char*) &_sold_nm, sizeof(int));
     is.read((char*) &_price, sizeof(int));
@@ -177,7 +164,6 @@ EmployeesArray::EmployeesArray() {
 EmployeesArray::~EmployeesArray() {
     for (int i = 0; i < _size; i++) 
         delete _employees[i];
-    std::cout << "Delete Array";
     delete [] _employees;
 }
 

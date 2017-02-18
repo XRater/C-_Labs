@@ -5,14 +5,12 @@
 #include <iostream>
 #include <fstream>
 
-char* read_string(char*& dest);
+int read_string(char*& dest);
+int get_string(char*& dest, std::ifstream& is);
 
 class Employee {
 public:
-    virtual ~Employee() {
-        std::cout << "Deleted\n";
-        delete [] _name;    
-    }
+    virtual ~Employee() {delete [] _name;}
     virtual int salary() const = 0;
     virtual void read(std::istream& is) = 0;
     virtual void print(std::ostream& os) const = 0;
