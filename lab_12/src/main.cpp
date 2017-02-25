@@ -5,7 +5,7 @@
 
 class Product {
 public:
-    Product(const char* name = "", int quantity = 0, double price = 0);
+    Product(const char* name = NULL, int quantity = 0, double price = 0);
     Product(const Product& other);
     ~Product();
 
@@ -19,27 +19,33 @@ private:
 };
 
 Product::Product(const char* name, int quantity, double price) {
-    name_ = new char[strlen(name) + 1];
-    strcpy(name_, name);
+    name_ = NULL;
+    if (name != NULL) {
+        name_ = new char[strlen(name) + 1];
+        strcpy(name_, name);
+    }
     quantity_ = quantity;
     price_ = price;
 }
 
 Product::Product(const Product& other) {
-    name_ = new char[strlen(other.name_) + 1];
-    strcpy(name_, other.name_);
+    name_ = NULL;
+    if (other.name_ != NULL) {
+        name_ = new char[strlen(other.name_) + 1];
+        strcpy(name_, other.name_);
+    }
     quantity_ = other.quantity_;
     price_ = other.price_;    
 }
 
 Product& Product::operator=(const Product& other) {
-    delete [] name_;
-    name_ = new char[strlen(other.name_) + 1];
-    strcpy(name_, other.name_);
-    quantity_ = other.quantity_;
-    price_ = other.price_;    
+    Product tmp(other);
+    std::swap(name_, tmp.name_);
+    std::swap(quantity_, tmp.quantity_);
+    std::swap(price_, tmp.price_);
     return *this;
 }
+
 
 
 Product::~Product() {
@@ -59,35 +65,48 @@ void print(const my_vector<Product>& v) {
 
 //-------------------------------------------------------------------------------------------------------
 
-int main() {
-    //test_my_vector<int>(5, 10);
-    //test_my_vector<Product>(Product("asdf", 4, 12.0), Product("qwe", -1, 7.5));
- //   my_vector<int> v1;
- //   v1.push_back(1);
- //   v1.push_back(2);
- //   v1.pop_back();
- //   v1.push_back(3);
-  //  my_vector<int> u(5);
-    my_vector<Product> v1(5);
-    Product p("HI", 1, 1.2);
-    Product p1(p);
-    Product p2("Hello", 1, 1.2);
-    //std::cout << p;
-    //v1.resize(20);
-    v1.push_back(p);
-    v1.push_back(p2);
-    v1.push_back(p1);
-    my_vector<Product> v2;
-    v2 = v1;
+template<class T>
+void test_my_vector(const T& t1, const T& t2) {
+  
+    my_vector<T> v1;
+    std::cout << v1.size() << ' ' << v1.capacity() << ' ' << v1.empty() << '\n';
+    v1.push_back(t1);
+    v1.push_back(t2);
+    v1.pop_back();
+    std::cout << v1.size() << ' ' << v1.capacity() << ' ' << v1.empty() << '\n';
+    std::cout << v1 << '\n';
+  
+    my_vector<T> v2(2);
+    v2.resize(2);
+    v2[0] = t2;
+    v2[1] = t1;
+    std::cout << v2.size() << ' ' << v2.capacity() << ' ' << v2.empty() << '\n';
+    std::cout << v2 << '\n';
     
-/*    std::cout << v.size() << ' ' << v.capacity() << ' ' << v.empty() << '\n';
-    v = u;
-    std::cout << v.size() << ' ' << v.capacity() << ' ' << v.empty() << '\n';
-    my_vector<int> v1(v);   
-    v1.push_back(1); */
-    //std::cout << v1.size() << ' ' << v1.capacity() << ' ' << v1.empty() << '\n';
-    //std::cout << v2[0] << ' ' << v2[1] << '\n';
-    std::cout << v2;
+
+    my_vector<T> v3(v2);    
+    v3[0] = v3[1];
+    std::cout << v3.size() << ' ' << v3.capacity() << ' ' << v3.empty() << '\n';
+    std::cout << v3 << '\n';
+    v3.resize(3);
+    v3[2] = t1;
+    v3.reserve(10);   
+    std::cout << v3.size() << ' ' << v3.capacity() << ' ' << v3.empty() << '\n';
+    std::cout << v3 << '\n';
+    v3 = v1;
+    v3.clear();
+    std::cout << v3.size() << ' ' << v3.capacity() << ' ' << v3.empty() << '\n';
+    std::cout << v3 << '\n';
+    std::cout << "\n\n"; 
+    
+}
+
+
+int main() {
+    test_my_vector<int>(5, 10);
+    test_my_vector<Product>(Product("asdf", 4, 12.0), Product("qwe", -1, 7.5));    
     return 0;
 }
+
+
 
