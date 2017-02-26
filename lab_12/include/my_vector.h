@@ -20,8 +20,8 @@ public:
     void resize(size_t n);
     void reserve(size_t n);
 
-    T& operator[](size_t index) const;
     T& operator[](size_t index);
+    const T& operator[](size_t index) const;
 
     void push_back(const T& t);
     void pop_back();
@@ -40,7 +40,7 @@ private:
 
 template <class T>
 my_vector<T>::my_vector() {
-    capacity_ = 2;
+    capacity_ = 1;
     size_ = 0;
     array_ = (T*)(new char[capacity_ * sizeof(T)]);    
 }
@@ -53,6 +53,8 @@ my_vector<T>::my_vector(size_t n) {
     while (capacity_ < n)
         capacity_ *= 2;
     array_ = (T*)(new char[capacity_ * sizeof(T)]);    
+    for (size_t i = 0; i < n; i++) 
+        new (&array_[i]) T();
 }
 
 
@@ -103,13 +105,13 @@ bool my_vector<T>::empty() const {
 
 
 template <class T>
-T& my_vector<T>::operator[] (size_t index) {
+T& my_vector<T>::operator[] (size_t index){
     return array_[index];
 }
 
 
 template <class T>
-T& my_vector<T>::operator[] (size_t index) const {
+const T& my_vector<T>::operator[] (size_t index) const {
     return array_[index];
 }
 
