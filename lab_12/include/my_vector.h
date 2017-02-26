@@ -144,8 +144,8 @@ void my_vector<T>::reserve(size_t capacity) {
 
 template <class T>
 void my_vector<T>::push_back(const T& t) {
-    resize(size_ + 1);
-    new (&array_[size_ - 1]) T(t);        
+    reserve(size_ + 1);
+    new (&array_[size_++]) T(t);        
 }
 
 
