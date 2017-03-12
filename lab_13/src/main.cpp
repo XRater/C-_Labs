@@ -1,5 +1,7 @@
 #include <cstddef>
+#include <iostream>
 #include "my_array.h"
+#include <cstdio>
 
 template<typename T, std::size_t N>
 void test_core() {
@@ -38,7 +40,7 @@ class NonCopyable {
 };
 
 
-void my_test_bool() {
+void test_my_bool() {
     my_array<bool, 10> arr;
     arr.fill(true);
     bool b = arr[1];
@@ -48,6 +50,9 @@ void my_test_bool() {
     for (int i = 0; i < 10; i++)
         if (i != 4)
             assert(arr[i] == true);
+    arr[4] = arr[3];
+    for (int i = 0; i < 10; i++)
+        assert(arr[i] == true);
 }
 
 
@@ -58,4 +63,5 @@ int main() {
 
   test_assign<int, 10>();
   test_assign<bool, 10>();
+  test_my_bool();
 }
