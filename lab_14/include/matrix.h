@@ -3,27 +3,9 @@
 
 #pragma once 
 
-class MatrixExeption {
+class MatrixException : public std::logic_error {
 public:
-    virtual void inform() = 0;
-};
-
-
-class MatrixSumExeption : public MatrixExeption {
-public:
-    void inform();    
-};
-
-
-class MatrixMulExeption : public MatrixExeption {
-public:
-    void inform();    
-};
-
-
-class MatrixIndexExeption : public MatrixExeption {
-public:
-    void inform();    
+    MatrixException(std::string msg) : logic_error(msg) {;}
 };
 
 

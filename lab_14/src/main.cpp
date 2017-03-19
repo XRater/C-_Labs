@@ -56,8 +56,8 @@ int Interpretator::get_cmd() {
         else 
             std::cout << "Wrong command\n";
     }      
-    catch(MatrixExeption& e) {
-        e.inform();
+    catch(MatrixException& e) {
+        std::cout << e.what();
     }
     return 0;
 }
@@ -69,17 +69,4 @@ int main() {
         if (I.get_cmd() != 0)
             break;
     }
-/*
-    std::ifstream fin;
-    fin.open("in.txt", std::ifstream::binary);
-    Matrix a(2, 3);
-    Matrix b(3, 4);
-    fin >> a;
-    
-    std::ifstream fin1;
-    fin1.open("in1.txt", std::ifstream::binary);
-    fin1 >> b;
-    
-    a *= b;
-    std::cout << a;*/
 }
