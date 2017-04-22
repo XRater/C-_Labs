@@ -1,9 +1,17 @@
-#include "Boardtest.h"
-#include <iostream>
+#include "HuffmanTest.h"
+#include "InitTest.h"
+#include "ReadPrintTest.h"
 
 int main() {
-    BoardTest bt;
-    bt.runAllTests();
+    InitTest it;
+    it.runAllTests();
+
+    HuffmanTest ht;
+    ht.runAllTests();
+
+    ReadPrintTest rt;
+    rt.runAllTests();
+
     Test::showFinalResult();
     return 0;
 }

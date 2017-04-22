@@ -1,6 +1,4 @@
 #pragma once
-#include "archiver.h"
-
 #include <iostream>
 #include <queue>
 #include <cstdlib>
@@ -13,23 +11,20 @@ public:
 
 
 class HuffmanNode {
-    
-    friend class HuffmanTest;
-
 public:
     HuffmanNode(unsigned char name = 0, size_t freq = 0) : name_(name), freq_(freq) {};
     HuffmanNode(HuffmanNode* left, HuffmanNode* right) : 
                     left_(left), right_(right), freq_(left->freq_ + right->freq_) {};
-    
-    ~HuffmanNode() {delete left_; delete right_;};
+    ~HuffmanNode();
 
-    bool operator >(const HuffmanNode& other) const {return freq_ > other.freq_;}
+    bool operator >(const HuffmanNode& other) {return freq_ > other.freq_;}
 
     void set_parent(HuffmanNode* p, char path) {parent_ = p; path_ = path;}
 
-    unsigned char get_name() const {return name_;}
-    char get_path() const {return path_;}    
-    HuffmanNode* get_parent() const {return parent_;}    
+    unsigned char get_name() {return name_;}
+    char get_path() {return path_;}
+    
+    HuffmanNode* get_parent() {return parent_;}    
 
 private:    
     HuffmanNode(const HuffmanNode& other);
@@ -45,47 +40,40 @@ private:
 
 
 class HuffmanTree {
-    
-    friend class HuffmanTest;
-
 public:
-    HuffmanTree() {}
-    HuffmanTree(size_t* symbol_freq);    
-    
+    HuffmanTree() {};
+    HuffmanTree(std::priority_queue <HuffmanNode*, std::vector<HuffmanNode*>, Comp_ptr <HuffmanNode*> > pq);
+
     ~HuffmanTree() {delete root;}
 
-    std::vector <HuffmanNode*> leafes;
 private:
     HuffmanTree(const HuffmanTree& other);
     HuffmanTree& operator=(const HuffmanTree);
 
-    void get_leafes_(size_t* symbol_freq);
-
     HuffmanNode* root = NULL;
+    std::vector <HuffmanNode*> leafes;
 };
 
 
 class HuffmanArchiver : public Archiver {
-    
-    friend class HuffmanTest;
-
 public:
-    HuffmanArchiver(std::istream* in = &std::cin, std::ostream* out = &std::cout) : Archiver(in, out) {};    
+    HuffmanArchiver(std::string in, std::string out) : Archiver(in, out) {};
+    ~HuffmanArchiver();
+    
+    void get_encode_table_();
     
 private:
-    const static size_t BUFF_SIZE = 1e3;
-
     HuffmanArchiver(const HuffmanArchiver& other);
     HuffmanArchiver& operator=(const HuffmanArchiver);
     
-    void get_encode_table_();
-    size_t print_tech_info_() const;    
+    HuffmanTree* build_tree_();
 
-    void get_symbols_freq_(size_t* symbol_freq);
-
-    void set_codes_(const HuffmanTree* tree);
-    std::string set_code_(const HuffmanNode* node);        
-//    HuffmanTree* tree_;
+    void get_symbols_freq_(); //also counts file_size_
+    void get_code_(HuffmanNode* node);    
+        
+    int symbol_freq_[CSIZE];
+    
+    std::vector <HuffmanNode*> leafes; //delete this field
+    HuffmanTree* tree_ = NULL; 
 };
-
 
