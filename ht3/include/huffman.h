@@ -31,7 +31,10 @@ public:
     char get_path() const {return path_;}    
     HuffmanNode* get_parent() const {return parent_;}    
 
-private:    
+    bool not_leafe() {return (left_ != NULL || right_ != NULL);}
+    HuffmanNode* move_down(char path) {return (path == '0' ? left_ : right_);}
+
+private:   
     HuffmanNode(const HuffmanNode& other);
     HuffmanNode& operator=(const HuffmanNode);
 
@@ -54,14 +57,14 @@ public:
     
     ~HuffmanTree() {delete root;}
 
+    HuffmanNode* root = NULL;
+
     std::vector <HuffmanNode*> leafes;
 private:
     HuffmanTree(const HuffmanTree& other);
     HuffmanTree& operator=(const HuffmanTree);
 
     void get_leafes_(size_t* symbol_freq);
-
-    HuffmanNode* root = NULL;
 };
 
 
@@ -70,7 +73,10 @@ class HuffmanArchiver : public Archiver {
     friend class HuffmanTest;
 
 public:
-    HuffmanArchiver(std::istream* in = &std::cin, std::ostream* out = &std::cout) : Archiver(in, out) {};    
+    HuffmanArchiver(std::istream* in = &std::cin, std::ostream* out = &std::cout) : Archiver(in, out)
+        {std::fill(freq_, freq_ + SYMB_NUMB, 0);}
+    
+    void decode() const;
     
 private:
     const static size_t BUFF_SIZE = 1e3;
@@ -79,13 +85,17 @@ private:
     HuffmanArchiver& operator=(const HuffmanArchiver);
     
     void get_encode_table_();
+    
     size_t print_tech_info_() const;    
+    void decode_text_(const HuffmanTree* tree) const;
 
     void get_symbols_freq_(size_t* symbol_freq);
+    void read_symbols_freq_(size_t* symbol_freq) const;
 
     void set_codes_(const HuffmanTree* tree);
-    std::string set_code_(const HuffmanNode* node);        
-//    HuffmanTree* tree_;
+    std::string set_code_(const HuffmanNode* node) const;        
+
+    size_t freq_[SYMB_NUMB];
 };
 
 

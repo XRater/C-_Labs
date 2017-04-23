@@ -1,4 +1,6 @@
 #pragma once
+#include "exception.h"
+
 
 #include <fstream>
 #include <iostream>
@@ -20,15 +22,17 @@ public:
          {std::fill(codes_, codes_ + SYMB_NUMB, "");}
     
     void encode();
-    void decode(); 
+    virtual void decode() const = 0; 
 
 protected:
+    const static size_t BUFF_SIZE = CBITS * 1e3;
     
     void virtual get_encode_table_() = 0;         
     size_t virtual print_tech_info_() const = 0;   //returns number of printed baits
-    
+
     std::pair<size_t, size_t> encode_text_() const; //returns number of read baits and number of printed baits
     void print_stat_(size_t read_size, size_t encoded_size, size_t added_size) const;    
+    
     
     std::istream* input_;
     std::ostream* output_;
@@ -42,7 +46,7 @@ class BinaryPrinter {
     friend class ReadPrintTest;    
     
 public:
-    BinaryPrinter(std::ostream* out = &std::cout) : printed_chars_(0), out(out) {};
+    BinaryPrinter(std::ostream* out = &std::cout) : printed_chars_(0), out_(out) {};
     
     void accum(const std::string& s);
     void accum(const char c) {std::string s = ""; s += c; accum(s);} //not used
@@ -57,7 +61,29 @@ private:
     size_t printed_chars_;
 
     std::string buff_;
-    std::ostream* out;
+    std::ostream* out_;
 };
+
+
+class BinaryReader {
+
+    friend class ReadPrintTest;    
+    
+public:
+    BinaryReader(std::istream* in = &std::cin) : in_(in) {};
+
+    char readBit();
+
+private:
+    const static size_t BUFF_SIZE = 1e3;
+    
+    void read_buff_();
+    void bit_split_(char byte);
+    
+    std::queue<char> buff_;
+    std::istream* in_;
+};
+
+
 
 

@@ -10,6 +10,9 @@ void ReadPrintTest::runAllTests() {
     test_printer_flush();
     test_printer_accum();
     test_printer_print();
+
+    test_reader_readBit();
+    test_reader_read_buff();
 }
 
 
@@ -63,3 +66,49 @@ void ReadPrintTest::test_printer_print() {
     delete [] s;
 }
 
+
+void ReadPrintTest::test_reader_readBit() {
+    std::string s = "11011010";
+    std::stringstream str;
+    BinaryPrinter printer(&str);
+    printer.accum(s);
+    printer.flush();
+    
+    BinaryReader reader(&str);
+    DO_CHECK(reader.readBit() == '1');    
+    DO_CHECK(reader.readBit() == '1');    
+    DO_CHECK(reader.readBit() == '0');    
+    DO_CHECK(reader.readBit() == '1');    
+    DO_CHECK(reader.readBit() == '1');    
+    DO_CHECK(reader.readBit() == '0');    
+    DO_CHECK(reader.readBit() == '1');    
+    DO_CHECK(reader.readBit() == '0');    
+    
+    bool flag = 0;
+    try {
+        reader.readBit();
+    }
+    catch (HuffmanException) {
+        flag = 1;
+    }
+    
+    DO_CHECK(flag == 1);    
+}
+
+
+void ReadPrintTest::test_reader_read_buff() {
+    std::string s = "101011001110110101001100", s1 = "";
+    std::stringstream str;
+    BinaryPrinter printer(&str);
+    printer.accum(s);
+    printer.flush();
+    
+    BinaryReader reader(&str);
+    reader.read_buff_();
+    
+    while (!reader.buff_.empty()) {
+        s1 += reader.buff_.front();
+        reader.buff_.pop();   
+    }
+    DO_CHECK(s == s1);
+}

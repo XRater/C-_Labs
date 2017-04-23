@@ -10,11 +10,11 @@ huffman: bin/main.o bin/initializer.o bin/huffman.o bin/archiver.o
 	$(CXX) bin/main.o bin/initializer.o bin/huffman.o bin/archiver.o -o huffman
 bin/main.o: src/main.cpp include/huffman.h include/initializer.h
 	$(CXX) -c src/main.cpp $(CXXFLAGS) -o bin/main.o
-bin/initializer.o: src/initializer.cpp include/huffman.h include/initializer.h
+bin/initializer.o: src/initializer.cpp include/huffman.h include/initializer.h include/exception.h
 	$(CXX) -c src/initializer.cpp $(CXXFLAGS) -o bin/initializer.o
 bin/huffman.o: src/huffman.cpp include/huffman.h include/archiver.h
 	$(CXX) -c src/huffman.cpp $(CXXFLAGS) -o bin/huffman.o
-bin/archiver.o: src/archiver.cpp include/archiver.h
+bin/archiver.o: src/archiver.cpp include/archiver.h include/exception.h
 	$(CXX) -c src/archiver.cpp $(CXXFLAGS) -o bin/archiver.o
 
 	

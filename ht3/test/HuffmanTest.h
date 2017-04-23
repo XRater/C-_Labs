@@ -10,7 +10,10 @@ public:
     void test_set_codes();
     
     void test_encode_text();
+    void test_print_tech_info();
 
+    void test_read_symbols_freq();
+    
     void runAllTests();
 };
 

@@ -11,6 +11,9 @@ void HuffmanTest::runAllTests() {
     test_set_codes();
     
     test_encode_text();
+    test_print_tech_info();
+
+    test_read_symbols_freq();
 }
 
 
@@ -203,6 +206,72 @@ void HuffmanTest::test_encode_text() {
     DO_CHECK(res.first == 0 && res.second == 0);
 
     delete [] s;
+}   
+
+
+void HuffmanTest::test_print_tech_info() {
+    size_t n = -1, m = -1;
+    char c;
+    size_t array[10];
+    
+    std::stringstream out1;
+    HuffmanArchiver arc1(&std::cin, &out1);
+    arc1.print_tech_info_();
+
+    out1.read((char*) &m, sizeof(size_t));
+    out1.read((char*) &n, sizeof(size_t));
+    DO_CHECK(n == 0 && m == 0);
+
+
+    n = -1, m = -1;            
+    std::stringstream out2;
+    HuffmanArchiver arc2(&std::cin, &out2);
+    arc2.codes_['a'] = "10", arc2.codes_['b'] = "", arc2.codes_['c'] = "1101", arc2.codes_['d'] = "1";
+    arc2.freq_['a'] = 3, arc2.freq_['b'] = 5, arc2.freq_['c'] = 1, arc2.freq_['d'] = 0;
+    arc2.print_tech_info_();
+    
+    out2.read((char*) &m, sizeof(size_t));
+    DO_CHECK(m == 3);
+    for (size_t i = 0; i < m; i++) {
+        out2.read((char*) &c, sizeof(char));
+        out2.read((char*) (array + i), sizeof(size_t));                
+    }    
+    DO_CHECK(array[0] == 3 && array[1] == 5 && array[2] == 1);
+    out2.read((char*) &n, sizeof(size_t));
+    DO_CHECK(n == 10);
+}
+
+
+void HuffmanTest::test_read_symbols_freq() {
+    size_t array[SYMB_NUMB];
+
+    std::stringstream in1;
+    size_t n = 3, f1 = 3, f2 = 2, f3 = 7;
+    char a = 255, b = 0, c = 193;
+    in1.write((char*) &n, sizeof(size_t));
+    in1.write((char*) &a, sizeof(char));
+    in1.write((char*) &f1, sizeof(size_t));
+    in1.write((char*) &b, sizeof(char));
+    in1.write((char*) &f2, sizeof(size_t));
+    in1.write((char*) &c, sizeof(char));
+    in1.write((char*) &f3, sizeof(size_t));
+    
+    HuffmanArchiver arc1(&in1, &std::cout);
+    arc1.read_symbols_freq_(array);
+    DO_CHECK(array[255] == 3 && array[0] == 2 && array[193] == 7);
+
+    
+    std::fill(array, array + SYMB_NUMB, 0);
+    std::stringstream in2;
+    n = 0;
+    in2.write((char*) &n, sizeof(size_t));
+
+    bool flag = 0;
+    HuffmanArchiver arc2(&in2);
+    arc2.read_symbols_freq_(array);
+    for (size_t i = 0; i < SYMB_NUMB; i++)
+        flag |= array[i] != 0;
+    DO_CHECK(flag == 0);
 }
 
 
