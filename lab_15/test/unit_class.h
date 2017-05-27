@@ -6,7 +6,7 @@
 namespace linq_test {
 
     template<class T>
-    void test_int() {
+    void test() {
     
         typedef std::pair<T, T> pairt;
     
@@ -22,15 +22,16 @@ namespace linq_test {
         res = from(v.begin(), v.end())
                 .take(4)
                 .drop(1)
-                .select([](T t)->T {return t;})
+                .select([](T t)->T {return T(t);})
                 .to_vector();
-
-//        std::vector<pairt> pairres;
-//        pairres = from(v.begin(), v.end())
-//                .take(4)
-//                .drop(1)
-//                .select<pairt>(Pair())
-//                .to_vector();
+/*
+        std::vector<pairt> pairres;
+        pairres = from(v.begin(), v.end())
+                .take(4)
+                .drop(1)
+                .select<pairt>(Pair())
+                .to_vector();
+*/
     }
 
 //------------------------------------------------------------------------------------------------------
@@ -59,17 +60,30 @@ namespace linq_test {
     private:
         int x;    
     };
+ 
+    class Memory {
+    public:
+        Memory(int a = 0) { x = new int; }
+        ~Memory() {delete x;}
+                
+    private:
+        int* x;
+    };
     
     TEST(classes, base) {
-        test_int<Base>();
+        test<Base>();
     }
     
 //    TEST(classes, nonassignable) {
-//        test_int<NonAssignable>();
+//        test<NonAssignable>();
 //    }
 
 //    TEST(classes, nonconstructable) {
-//        test_int<NonConstructable>();
+//        test<NonConstructable>();
 //    }
+
+    TEST(classes, memory) {
+        test<Memory>;
+    }
 
 }

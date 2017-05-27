@@ -202,16 +202,17 @@ typedef std::pair<int, int> intpair;
         ans = {};
         ASSERT_EQ(ans, res);
 
-        ASSERT_THROW(from(v.begin(), v.end())
-                          .take(3)
-                          .to_vector(), EnumeratorException);   
+        res = from(v.begin(), v.end())
+                               .take(3)
+                               .to_vector();   
+        ASSERT_EQ(res, ans);
     }
 
     TEST(take, not_empty)
     {
         std::vector<int> v, res, ans;
-        
         v = {1, 2, 3};
+ 
         res = from(v.begin(), v.end())
                              .take(0)
                              .to_vector();   
@@ -229,6 +230,13 @@ typedef std::pair<int, int> intpair;
                                .to_vector();   
         ans = {1};
         ASSERT_EQ(res, ans);
+
+        res = from(v.begin(), v.end())
+                               .take(7)
+                               .to_vector();   
+        ans = {1, 2, 3};
+        ASSERT_EQ(res, ans);
+
     }
 
     TEST(until, functor) {

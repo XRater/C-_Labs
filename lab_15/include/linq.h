@@ -37,11 +37,9 @@ public:
     virtual operator bool() const = 0;  // Возвращает true, если есть текущий элемент
 
 
-    enumerator<T>& drop(int count) {
-        for (int i = 0; i < count; i++)
-            ++*this; 
-        return *this;
-    }
+    auto drop(int count) {
+        return drop_enumerator<T>(*this, count);
+    }    
 
     template<typename U = T, typename F>
     auto select(F func) {
@@ -109,27 +107,32 @@ private:
 };
 
 
-/* ?????/
+
 template<typename T>
 class drop_enumerator : public enumerator<T> {
 public:
-    drop_enumerator(enumerator<T> &parent, int count) : parent_(parent), count_(count) {}
+    drop_enumerator(enumerator<T> &parent, int count) : parent_(parent) {
+        for (int i = 0; i < count; i++)
+            ++*this; 
+    }
 
-    drop_enumerator<T>& drop() {
-        for (int i = 0; i < count_  ; i++)
-            ++parent_; 
+    operator bool() const { 
+        return parent_; 
+    }
+    
+    const T& operator*() const { 
+        return *parent_; 
+    }
+
+    drop_enumerator<T>& operator++() { 
+        ++parent_; 
         return *this;
     }
 
-    operator bool() { return parent_; }
-    T operator *() { return *parent_; }
-    enumerator<T>& operator++() { return ++parent_; }
-
 private:
     enumerator<T>& parent_;
-    int count_;
 };
-*/
+
 
 
 template<typename T>
@@ -137,7 +140,7 @@ class take_enumerator : public enumerator<T> {
 public:
     take_enumerator(enumerator<T> &parent, int count) : parent_(parent), count_(count) {}
 
-    operator bool() const { return count_ > 0; }
+    operator bool() const { return count_ > 0 && parent_; }
 
     const T& operator *() const { return *parent_; }
 
@@ -159,16 +162,22 @@ private:
 template<typename T, typename U, typename F>
 class select_enumerator : public enumerator<T> {
 public:
-    select_enumerator(enumerator<U> &parent, F func) : parent_(parent), func_(func) {}
+    select_enumerator(enumerator<U> &parent, F func) : parent_(parent), func_(func) {
+        if (parent_)
+            accum = new T(func_(*parent_));
+    }
+    ~select_enumerator() {delete accum;}
     
     const T& operator*() const {
-        delete accum;
-        accum = new T(func_(*parent_));
         return *accum;
     }
         
     select_enumerator& operator++() {
         ++parent_;
+        if (parent_) {
+            delete accum;
+            accum = new T(func_(*parent_));
+        }
         return *this;    
     }
     
@@ -201,7 +210,7 @@ public:
     operator bool() const {
         return parent_ && !predicate_(*parent_); 
     }
-    //
+    
 private:
     enumerator<T>& parent_;
     mutable F predicate_;
