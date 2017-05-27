@@ -39,7 +39,6 @@ namespace linq_test {
     class Base {
     public:
         Base(int x = 0) : x(x) {}
-    
     private:
         int x;
     };
@@ -48,7 +47,6 @@ namespace linq_test {
     public:
         NonAssignable(int x = 0) : x(x) {}
         NonAssignable& operator=(const NonAssignable& other) = delete;
-        
     private:
         int x;
     };
@@ -56,7 +54,6 @@ namespace linq_test {
     class NonConstructable {
     public:
         NonConstructable(int x) : x(x) {}
-    
     private:
         int x;    
     };
@@ -65,7 +62,6 @@ namespace linq_test {
     public:
         Memory(int a = 0) { x = new int; }
         ~Memory() {delete x;}
-                
     private:
         int* x;
     };
@@ -78,9 +74,9 @@ namespace linq_test {
 //        test<NonAssignable>();
 //    }
 
-//    TEST(classes, nonconstructable) {
-//        test<NonConstructable>();
-//    }
+    TEST(classes, nonconstructable) {
+        test<NonConstructable>();
+    }
 
     TEST(classes, memory) {
         test<Memory>;
