@@ -160,11 +160,13 @@ template<typename T, typename U, typename F>
 class select_enumerator : public enumerator<T> {
 public:
     select_enumerator(enumerator<U> &parent, F func) : parent_(parent), func_(func) {}
-
-    const T& operator*() const {
-        return func_(*parent_);
-    }
     
+    const T& operator*() const {
+        delete accum;
+        accum = new T(func_(*parent_));
+        return *accum;
+    }
+        
     select_enumerator& operator++() {
         ++parent_;
         return *this;    
@@ -177,6 +179,8 @@ public:
 private:
     enumerator<U>& parent_;    
     mutable F func_;
+
+    mutable T* accum = nullptr; 
 };
 
 
@@ -197,7 +201,7 @@ public:
     operator bool() const {
         return parent_ && !predicate_(*parent_); 
     }
-    
+    //
 private:
     enumerator<T>& parent_;
     mutable F predicate_;
