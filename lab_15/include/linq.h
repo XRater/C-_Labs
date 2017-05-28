@@ -7,11 +7,7 @@
 #include <cstring>
 #include <type_traits>
 
-class EnumeratorException : public std::logic_error {
-public:
-    EnumeratorException(std::string msg) : logic_error(msg) {};
-};
-
+//With tests (but they do not cover all code)
 
 template<typename T, typename Iter>
 class range_enumerator;
@@ -149,12 +145,9 @@ public:
     const T& operator *() const override { return *parent_; }
 
     take_enumerator<T>& operator++() override { 
-        if (--count_ >= 0) {
+        if (--count_ >= 0)
             ++parent_; 
-            return *this;
-        }
-        else
-            throw EnumeratorException("Out of elements");
+        return *this;
     }
 
     operator bool() const override { return count_ > 0 && parent_; }
@@ -168,16 +161,20 @@ private:
 template<typename T, typename U, typename F>
 class select_enumerator : public enumerator<T> {
 public:
-    select_enumerator(enumerator<U> &parent, F func) : parent_(parent), func_(func) {}
+    select_enumerator(enumerator<U> &parent, F func) : parent_(parent), func_(std::move(func)) {}
     ~select_enumerator() {delete accum;}
     
 /*
-    We could also hold T instead of T* (we wont allocate a lot of memory in this case)
+    We could also hold T instead of T*
     But with this way (holding T*) we are able to work with classes without defaul constructor (NonConstructable in tests)
 */    
     const T& operator*() const override {
-        delete accum;
-        accum = new T(func_(*parent_));
+        if (accum == nullptr) {
+            accum = new T(func_(*parent_));
+            return *accum;
+        }                       
+        accum->~T();                      
+        accum = new (accum) T(func_(*parent_));
         return *accum;
     }
         
@@ -199,7 +196,9 @@ private:
 template<typename T, typename F>
 class until_enumerator : public enumerator<T> {
 public:
-    until_enumerator(enumerator<T> &parent, F predicate) : parent_(parent), predicate_(predicate) {}
+    until_enumerator(enumerator<T> &parent, F predicate) : 
+                            parent_(parent), 
+                            predicate_(std::move(predicate)) {}
 
     const T& operator*() const override { return *parent_; }
     
@@ -219,7 +218,9 @@ private:
 template<typename T, typename F>
 class where_enumerator : public enumerator<T> {
 public:
-    where_enumerator(enumerator<T> &parent, F predicate) : parent_(parent), predicate_(predicate) {
+    where_enumerator(enumerator<T> &parent, F predicate) : 
+                        parent_(parent), 
+                        predicate_(std::move(predicate)) {
         if (parent_ && !predicate(*parent_))
             ++*this;
     }

@@ -147,6 +147,17 @@ typedef std::pair<int, int> intpair;
         ans = {1, 2, 3, 4, 5, 6, 7, 8, 9};
         ASSERT_EQ(res, ans);
         
+        res = from(v.begin(), v.end())
+                .take(11).drop(9).take(0)
+                .to_vector();        
+        ans = {};
+        ASSERT_EQ(res, ans);
+
+        res = from(v.begin(), v.end())
+                .take(0).drop(9).take(11)
+                .to_vector();        
+        ans = {};
+        ASSERT_EQ(res, ans);
     }    
 
     TEST(constant, small_test) 
@@ -306,15 +317,15 @@ typedef std::pair<int, int> intpair;
         ASSERT_EQ(res, ans);
     }
 
-    
+/*    
     TEST(bool_, simple) {
         std::vector<bool> v = {1, 1, 0}, res, ans;
         res = from(v.begin(), v.end())
-                .to_vector(); 
+                .to_vector();  
         ans = {1, 1, 0};
         ASSERT_EQ(ans, res);        
     } 
-    
+*/    
     
     TEST(other, NE)
     {
