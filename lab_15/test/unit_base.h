@@ -8,7 +8,7 @@ typedef std::pair<int, int> intpair;
 
     TEST(range, ptr_and_bool)
     {
-        std::vector<bool> empty;
+        std::vector<int> empty;
 	    ASSERT_FALSE(from(empty.begin(), empty.end()));
 
         std::vector<int> v = {1, 2, 3};
@@ -42,9 +42,6 @@ typedef std::pair<int, int> intpair;
     
         int a[2] = {1, 2};
         ASSERT_EQ(*++from(a, a + 2), 2);
-    
-        ASSERT_THROW(*++from(a, a + 1), EnumeratorException);    
-        ASSERT_THROW(++from(a + 2, a + 2), EnumeratorException);    
     }
 
 
@@ -56,58 +53,101 @@ typedef std::pair<int, int> intpair;
         ASSERT_TRUE(from(small.begin(), small.end()));
         ASSERT_FALSE(from(small.begin(), small.end()).drop(1));
 
-        std::vector<int> v = {1, 2, 3};
+        std::vector<int> v = {1, 2, 3}, res, ans;
         ASSERT_EQ(*from(v.begin(), v.end()).drop(0), 1);
         ASSERT_EQ(*from(v.begin(), v.end()).drop(2), 3);
     
         int a[2] = {1, 2};
         ASSERT_EQ(*from(a, a + 2).drop(1), 2);
     
-        ASSERT_THROW(*from(a, a + 2).drop(2), EnumeratorException);    
-        ASSERT_THROW(from(a, a + 2).drop(3), EnumeratorException);    
+        ASSERT_FALSE(from(a, a + 2).drop(2));    
+        ASSERT_FALSE(from(a, a + 2).drop(3));    
+ 
+        v = {1, 2, 3, 4, 5};
+        res = from(v.begin(), v.end()).drop(1).drop(2).drop(1).to_vector();
+        ans = {5};
+        ASSERT_EQ(res, ans);
     }
 
 
-    TEST(terminate, to_vector)
+    TEST(take, empty)
     {
-        std::vector<int> xs = { 1, 2, 3 };
-        std::vector<int> res;
-        std::vector<int> ans;
-
-        ans = {1, 2, 3};
-        res = from(xs.begin(), xs.end()).to_vector();
-        ASSERT_EQ(res, ans);
-
+        std::vector<int> v, res, ans;
+        
+        v = {};
+        res = from(v.begin(), v.end())
+                             .take(0)
+                             .to_vector();   
         ans = {};
-        res = from(xs.begin(), xs.begin()).to_vector();
-        ASSERT_EQ(res, ans);
+        ASSERT_EQ(ans, res);
 
-        xs = {};
-        ans = xs;
-        res = from(xs.begin(), xs.end()).to_vector();
+        res = from(v.begin(), v.end())
+                               .take(3)
+                               .to_vector();   
         ASSERT_EQ(res, ans);
     }
 
-
-    TEST(terminate, copy_to)
+    TEST(take, not_empty)
     {
-        std::vector<int> xs = { 1, 2, 3 };
-        std::vector<int> res = {0, 0, 0, 0};
-        std::vector<int> ans;
+        std::vector<int> v, res, ans;
+        v = {1, 2, 3};
+ 
+        res = from(v.begin(), v.end())
+                             .take(0)
+                             .to_vector();   
+        ans = {};
+        ASSERT_EQ(ans, res);
 
-        ans = {1, 2, 3, 0};
-        from(xs.begin(), xs.end()).copy_to(res.begin());
+        res = from(v.begin(), v.end())
+                               .take(3)
+                               .to_vector();   
+        ans = {1, 2, 3};
         ASSERT_EQ(res, ans);
 
-        ans = {1, 2, 3, 0};
-        from(xs.begin(), xs.begin()).copy_to(res.begin());
+        res = from(v.begin(), v.end())
+                               .take(1)
+                               .to_vector();   
+        ans = {1};
         ASSERT_EQ(res, ans);
 
-        std::vector<int> xs1 = {};
-        ans = {1, 2, 3, 0};
-        from(xs1.begin(), xs1.end()).copy_to(res.begin());
+        res = from(v.begin(), v.end())
+                               .take(7)
+                               .to_vector();   
+        ans = {1, 2, 3};
         ASSERT_EQ(res, ans);
+
     }
+
+    
+    TEST(drop_and_take, main_test)
+    {
+        std::vector<int> v, res, ans;
+        v = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        res = from(v.begin(), v.end())
+                .drop(5).drop(5).drop(3)
+                .to_vector();        
+        ans = {};
+        ASSERT_EQ(res, ans);
+        
+        res = from(v.begin(), v.end())
+                .take(6).take(0).take(5)
+                .to_vector();        
+        ans = {};
+        ASSERT_EQ(res, ans);
+
+        res = from(v.begin(), v.end())
+                .drop(0).take(3).drop(1)
+                .to_vector();        
+        ans = {2, 3};
+        ASSERT_EQ(res, ans);
+
+        res = from(v.begin(), v.end())
+                .take(11).drop(0).take(14)
+                .to_vector();        
+        ans = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        ASSERT_EQ(res, ans);
+        
+    }    
 
     TEST(constant, small_test) 
     {
@@ -191,54 +231,6 @@ typedef std::pair<int, int> intpair;
         ASSERT_EQ(res1, ans1);
     }
     
-    TEST(take, empty)
-    {
-        std::vector<int> v, res, ans;
-        
-        v = {};
-        res = from(v.begin(), v.end())
-                             .take(0)
-                             .to_vector();   
-        ans = {};
-        ASSERT_EQ(ans, res);
-
-        res = from(v.begin(), v.end())
-                               .take(3)
-                               .to_vector();   
-        ASSERT_EQ(res, ans);
-    }
-
-    TEST(take, not_empty)
-    {
-        std::vector<int> v, res, ans;
-        v = {1, 2, 3};
- 
-        res = from(v.begin(), v.end())
-                             .take(0)
-                             .to_vector();   
-        ans = {};
-        ASSERT_EQ(ans, res);
-
-        res = from(v.begin(), v.end())
-                               .take(3)
-                               .to_vector();   
-        ans = {1, 2, 3};
-        ASSERT_EQ(res, ans);
-
-        res = from(v.begin(), v.end())
-                               .take(1)
-                               .to_vector();   
-        ans = {1};
-        ASSERT_EQ(res, ans);
-
-        res = from(v.begin(), v.end())
-                               .take(7)
-                               .to_vector();   
-        ans = {1, 2, 3};
-        ASSERT_EQ(res, ans);
-
-    }
-
     TEST(until, functor) {
         
         class LessThenOne {
@@ -271,5 +263,69 @@ typedef std::pair<int, int> intpair;
         ans = {};
         ASSERT_EQ(res, ans);                           
     }
+
+
+    TEST(terminate, to_vector)
+    {
+        std::vector<int> xs = { 1, 2, 3 };
+        std::vector<int> res;
+        std::vector<int> ans;
+
+        ans = {1, 2, 3};
+        res = from(xs.begin(), xs.end()).to_vector();
+        ASSERT_EQ(res, ans);
+
+        ans = {};
+        res = from(xs.begin(), xs.begin()).to_vector();
+        ASSERT_EQ(res, ans);
+
+        xs = {};
+        ans = xs;
+        res = from(xs.begin(), xs.end()).to_vector();
+        ASSERT_EQ(res, ans);
+    }
+
+
+    TEST(terminate, copy_to)
+    {
+        std::vector<int> xs = { 1, 2, 3 };
+        std::vector<int> res = {0, 0, 0, 0};
+        std::vector<int> ans;
+
+        ans = {1, 2, 3, 0};
+        from(xs.begin(), xs.end()).copy_to(res.begin());
+        ASSERT_EQ(res, ans);
+
+        ans = {1, 2, 3, 0};
+        from(xs.begin(), xs.begin()).copy_to(res.begin());
+        ASSERT_EQ(res, ans);
+
+        std::vector<int> xs1 = {};
+        ans = {1, 2, 3, 0};
+        from(xs1.begin(), xs1.end()).copy_to(res.begin());
+        ASSERT_EQ(res, ans);
+    }
+
+    
+    TEST(bool_, simple) {
+        std::vector<bool> v = {1, 1, 0}, res, ans;
+        res = from(v.begin(), v.end())
+                .to_vector(); 
+        ans = {1, 1, 0};
+        ASSERT_EQ(ans, res);        
+    } 
+    
+    
+    TEST(other, NE)
+    {
+        std::vector<int> data = { 0 };
+        std::vector<std::string> result =
+        from(data.begin(), data.end())
+            .select<std::string>([](int x) { return "foo"; })
+            .to_vector();
+        std::vector<std::string> ans = {"foo"};    
+        ASSERT_EQ(result, ans);
+    }
+    
 }
 

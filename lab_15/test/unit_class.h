@@ -23,7 +23,11 @@ namespace linq_test {
                 .take(4)
                 .drop(1)
                 .select([](T t)->T {return T(t);})
+                .until_eq(T(4))
                 .to_vector();
+
+        ans = {T(2), T(3)};
+        ASSERT_EQ(ans, res);
 /*
         std::vector<pairt> pairres;
         pairres = from(v.begin(), v.end())
@@ -39,6 +43,7 @@ namespace linq_test {
     class Base {
     public:
         Base(int x = 0) : x(x) {}
+        bool operator == (const Base& other) const {return x == other.x;} 
     private:
         int x;
     };
@@ -54,6 +59,7 @@ namespace linq_test {
     class NonConstructable {
     public:
         NonConstructable(int x) : x(x) {}
+        bool operator == (const NonConstructable& other) const {return x == other.x;} 
     private:
         int x;    
     };
@@ -62,6 +68,7 @@ namespace linq_test {
     public:
         Memory(int a = 0) { x = new int; }
         ~Memory() {delete x;}
+        bool operator == (const Memory& other) const {return *x == *other.x;} 
     private:
         int* x;
     };
@@ -82,4 +89,7 @@ namespace linq_test {
         test<Memory>;
     }
 
+    TEST(classes, bool_) {
+        test<bool>; 
+    }
 }
